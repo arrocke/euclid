@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Point from './Point'
 import Line from './Line'
+import Circle from './Circle'
 
 class Canvas extends Component {
   constructor(props) {
@@ -13,7 +14,9 @@ class Canvas extends Component {
       elements: [
         { type: 'point', x: 100, y: -200 },
         { type: 'point', x: -100, y: 100 },
-        { type: 'line', a: 0, b: 1 }
+        { type: 'line', a: 0, b: 1 },
+        { type: 'circle', c: 0, e: 1 },
+        { type: 'circle', c: 1, e: 0 }
       ]
     }
   }
@@ -39,6 +42,13 @@ class Canvas extends Component {
             b={this.findElement(el.b)}
             canvasWidth={this.state.width}
             canvasHeight={this.state.height}
+            elementId={i}
+          />
+        case 'circle':
+          return <Circle
+            key={i}
+            c={this.findElement(el.c)}
+            e={this.findElement(el.e)}
             elementId={i}
           />
         default:
