@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Point from './Point'
 
 class Canvas extends Component {
   constructor(props) {
@@ -15,7 +16,9 @@ class Canvas extends Component {
     const height = this.state.height
     const x = -width / 2
     const y = -height / 2
-    return <svg width="100%" height="100%" viewBox={`${x} ${y} ${width} ${height}`} />
+    return <svg width="100%" height="100%" viewBox={`${x} ${y} ${width} ${height}`} >
+      <Point x={100} y={-200} />
+    </svg>
   }
 
   componentDidMount () {
