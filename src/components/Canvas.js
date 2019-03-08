@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Point from './Point'
+import Line from './Line'
 
 class Canvas extends Component {
   constructor(props) {
@@ -11,7 +12,8 @@ class Canvas extends Component {
       height: window.innerHeight,
       elements: [
         { type: 'point', x: 100, y: -200 },
-        { type: 'point', x: -100, y: 100 }
+        { type: 'point', x: -100, y: 100 },
+        { type: 'line', a: 0, b: 1 }
       ]
     }
   }
@@ -28,6 +30,15 @@ class Canvas extends Component {
           return <Point
             key={i}
             x={el.x} y={el.y}
+            elementId={i}
+          />
+        case 'line':
+          return <Line
+            key={i}
+            a={this.findElement(el.a)}
+            b={this.findElement(el.b)}
+            canvasWidth={this.state.width}
+            canvasHeight={this.state.height}
             elementId={i}
           />
         default:
@@ -55,6 +66,10 @@ class Canvas extends Component {
     })
   }
 
+  findElement(id) {
+    return this.state.elements[id]
+  }
+
   componentDidMount () {
     window.addEventListener('resize', this.resize)
   }
@@ -68,6 +83,7 @@ class Canvas extends Component {
       width: window.innerWidth,
       height: window.innerHeight
     })
+    this.forceUpdate()
   }
 }
 
