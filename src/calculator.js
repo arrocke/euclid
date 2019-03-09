@@ -106,6 +106,8 @@ export default {
       }
     }
 
+    console.log(resolved)
+
     return resolved
   }
 }

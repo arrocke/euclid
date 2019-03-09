@@ -19,13 +19,8 @@ class Point extends Component {
     />
   }
 
-  eventData () {
-    const { elementId, x, y } = this.props
-    return { elementId, x, y }
-  }
-
   onClick () {
-    // this.props.onClick && this.props.onClick(this.eventData())
+    this.props.onClick && this.props.onClick(this.props.el)
   }
 
   onMouseOver () {

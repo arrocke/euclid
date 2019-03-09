@@ -9,18 +9,13 @@ class Canvas extends Component {
     super (props)
     this.resize = this.resize.bind(this)
     this.onCanvasClick = this.onCanvasClick.bind(this)
+    this.onPointClick = this.onPointClick.bind(this)
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight,
       elements: calculator.layout([
         { type: 'point', x: 100, y: -200 },
         { type: 'point', x: -100, y: 100 },
-        { type: 'circle', c: 0, e: 1},
-        { type: 'circle', c: 1, e: 0},
-        { type: 'intersection', e1: 2, e2: 3, neg: true },
-        { type: 'line', p1: 0, p2: 4 },
-        { type: 'line', p1: 1, p2: 4 },
-        { type: 'line', p1: 1, p2: 0 }
       ])
     }
   }
@@ -31,30 +26,32 @@ class Canvas extends Component {
     const x = -width / 2
     const y = -height / 2
 
-    const elements = this.state.elements.map((el, i) => {
-      switch (el.type) {
-        case 'intersection':
-        case 'point':
-          return <Point
+    const elements = [
+      ...this.state.elements
+        .filter(({ type }) => type === 'circle')
+        .map(el =>
+          <Circle
             key={el.id}
             el={el}
-          />
-        case 'line':
-          return <Line
+          />),
+      ...this.state.elements
+        .filter(({ type }) => type === 'line')
+        .map(el => 
+          <Line
             key={el.id}
             el={el}
             canvasWidth={this.state.width}
             canvasHeight={this.state.height}
-          />
-        case 'circle':
-          return <Circle
+          />),
+      ...this.state.elements
+        .filter(({ type }) => type === 'point')
+        .map(el => 
+          <Point
             key={el.id}
             el={el}
-          />
-        default:
-          return null
-      }
-    }).filter(el => el !== null)
+            onClick={this.onPointClick}
+          />)
+    ]
 
     return <svg
       width="100%" height="100%"
@@ -66,6 +63,45 @@ class Canvas extends Component {
   }
 
   onCanvasClick(e) {
+    if (this.props.tool === 'point') {
+      const x = e.clientX - this.state.width / 2
+      const y = -(e.clientY - this.state.height / 2)
+      this.setState({
+        elements: calculator.layout([
+          ...this.state.elements,
+          { type: 'point', x, y }
+        ])
+      })
+    }
+  }
+
+  onPointClick(point) {
+    if (this.props.tool === 'line' || this.props.tool === 'circle') {
+      if (this.state.clickedPoint && this.state.clickedPoint !== point) {
+        if (this.props.tool === 'line') {
+          this.setState({
+            elements: calculator.layout([
+              ...this.state.elements,
+              { type: 'line', p1: this.state.clickedPoint.id, p2: point.id }
+            ])
+          })
+        } else {
+          this.setState({
+            elements: calculator.layout([
+              ...this.state.elements,
+              { type: 'circle', c: this.state.clickedPoint.id, e: point.id }
+            ])
+          })
+        }
+        this.setState({
+          clickedPoint: null
+        })
+      } else {
+        this.setState({
+          clickedPoint: point
+        })
+      }
+    }
   }
 
   findElement(id) {

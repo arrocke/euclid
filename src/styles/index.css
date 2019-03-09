@@ -20,3 +20,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+
+.Toolbar {
+  position: absolute;
+  margin: auto;
+  bottom: 0;
+  padding: 16px;
+}
+
+.Toolbar-tool {
+  margin: 8px;
+}
