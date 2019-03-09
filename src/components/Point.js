@@ -9,8 +9,9 @@ class Point extends Component {
   }
 
   render () {
+    const el = this.props.el
     return <circle
-      cx={this.props.x} cy={-this.props.y}
+      cx={el.x} cy={-el.y}
       r="4"
       onClick={this.onClick}
       onMouseOver={this.onMouseOver}
@@ -24,15 +25,15 @@ class Point extends Component {
   }
 
   onClick () {
-    this.props.onClick && this.props.onClick(this.eventData())
+    // this.props.onClick && this.props.onClick(this.eventData())
   }
 
   onMouseOver () {
-    this.props.onMouseOver && this.props.onMouseOver(this.eventData())
+    // this.props.onMouseOver && this.props.onMouseOver(this.eventData())
   }
 
   onMouseOut () {
-    this.props.onMouseOut && this.props.onMouseOut(this.eventData())
+    // this.props.onMouseOut && this.props.onMouseOut(this.eventData())
   }
 }
 

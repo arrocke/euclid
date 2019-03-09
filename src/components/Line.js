@@ -4,6 +4,8 @@ class Line extends Component {
   render () {
     const canvasWidth = this.props.canvasWidth
     const canvasHeight = this.props.canvasHeight
+    const el = this.props.el
+
     const left = {
       x: -canvasWidth / 2
     }
@@ -17,16 +19,10 @@ class Line extends Component {
       y: -top.y
     }
 
-    const a = this.props.a
-    const b = this.props.b
-
-    const m = (b.y - a.y) / (b.x - a.x)
-    const y = a.y - a.x * m
-
-    left.y = m * left.x + y
-    right.y = m * right.x + y
-    top.x = (top.y - y) / m
-    bottom.x = (bottom.y - y) / m
+    left.y = el.m * left.x + el.b
+    right.y = el.m * right.x + el.b
+    top.x = (top.y - el.b) / el.m
+    bottom.x = (bottom.y - el.b) / el.m
 
     const points = []
 

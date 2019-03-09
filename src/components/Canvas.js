@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Point from './Point'
 import Line from './Line'
 import Circle from './Circle'
+import calculator from '../calculator'
 
 class Canvas extends Component {
   constructor(props) {
@@ -11,13 +12,16 @@ class Canvas extends Component {
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight,
-      elements: [
+      elements: calculator.layout([
         { type: 'point', x: 100, y: -200 },
         { type: 'point', x: -100, y: 100 },
-        { type: 'line', a: 0, b: 1 },
-        { type: 'circle', c: 0, e: 1 },
-        { type: 'circle', c: 1, e: 0 }
-      ]
+        { type: 'circle', c: 0, e: 1},
+        { type: 'circle', c: 1, e: 0},
+        { type: 'intersection', e1: 2, e2: 3, neg: true },
+        { type: 'line', p1: 0, p2: 4 },
+        { type: 'line', p1: 1, p2: 4 },
+        { type: 'line', p1: 1, p2: 0 }
+      ])
     }
   }
 
@@ -29,32 +33,28 @@ class Canvas extends Component {
 
     const elements = this.state.elements.map((el, i) => {
       switch (el.type) {
+        case 'intersection':
         case 'point':
           return <Point
-            key={i}
-            x={el.x} y={el.y}
-            elementId={i}
+            key={el.id}
+            el={el}
           />
         case 'line':
           return <Line
-            key={i}
-            a={this.findElement(el.a)}
-            b={this.findElement(el.b)}
+            key={el.id}
+            el={el}
             canvasWidth={this.state.width}
             canvasHeight={this.state.height}
-            elementId={i}
           />
         case 'circle':
           return <Circle
-            key={i}
-            c={this.findElement(el.c)}
-            e={this.findElement(el.e)}
-            elementId={i}
+            key={el.id}
+            el={el}
           />
         default:
-          return ''
+          return null
       }
-    })
+    }).filter(el => el !== null)
 
     return <svg
       width="100%" height="100%"
@@ -66,14 +66,6 @@ class Canvas extends Component {
   }
 
   onCanvasClick(e) {
-    const x = e.clientX - this.state.width / 2
-    const y = -(e.clientY - this.state.height / 2)
-    this.setState({
-      elements: [
-        ...this.state.elements,
-        { type: 'point', x, y }
-      ]
-    })
   }
 
   findElement(id) {
