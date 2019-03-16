@@ -2,35 +2,46 @@ import React, { useState, useEffect } from 'react';
 import Point from './Point'
 import Line from './Line'
 import Circle from './Circle'
-import calculator from '../calculator'
+import { line, circle, allIntersections } from '../calc'
 
 function Canvas({ tool }) {
   const [{ width, height }, setSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
   })
-  const [elements, setElements] = useState(calculator.layout([
-    { type: 'point', x: 100, y: -200 },
-    { type: 'point', x: -100, y: 100 },
-  ]))
+  const [elements, setElements] = useState([])
+  const [intersections, setIntersections] = useState([])
   const [clickedPoint, setClickedPoint] = useState()
 
   const onPointClick = (point) => {
-    console.log(clickedPoint)
-    console.log(point)
     if (tool === 'line' || tool === 'circle') {
       if (clickedPoint && clickedPoint !== point) {
+        let el
         if (tool === 'line') {
-          setElements(calculator.layout([
-            ...elements,
-            { type: 'line', p1: clickedPoint.id, p2: point.id }
-          ]))
+          el = {
+            ...line(elements[clickedPoint.id], elements[point.id]),
+            id: elements.length,
+            type: 'line',
+            p1: clickedPoint.id,
+            p2: point.id
+          }
         } else {
-          setElements(calculator.layout([
-            ...elements,
-            { type: 'circle', c: clickedPoint.id, e: point.id }
-          ]))
+          el = {
+            ...circle(elements[clickedPoint.id], elements[point.id]),
+            id: elements.length,
+            type: 'circle',
+            c: clickedPoint.id,
+            e: point.id
+          }
         }
+        setElements([
+          ...elements,
+          el
+        ])
+        setIntersections([
+          ...intersections,
+          ...allIntersections(el, elements),
+        ])
         setClickedPoint(null)
       } else {
         setClickedPoint(point)
@@ -42,10 +53,14 @@ function Canvas({ tool }) {
     if (tool === 'point') {
       const x = e.clientX - width / 2
       const y = -(e.clientY - height / 2)
-      setElements(calculator.layout([
+      setElements([
         ...elements,
-        { type: 'point', x, y }
-      ]))
+        {
+          x, y,
+          id: elements.length,
+          type: 'point'
+        }
+      ])
     }
   }
 
@@ -80,6 +95,13 @@ function Canvas({ tool }) {
         />),
     ...elements
       .filter(({ type }) => type === 'point')
+      .map(el => 
+        <Point
+          key={el.id}
+          el={el}
+          onClick={() => onPointClick(el)}
+        />),
+    ...intersections
       .map(el => 
         <Point
           key={el.id}
