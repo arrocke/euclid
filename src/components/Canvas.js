@@ -7,26 +7,26 @@ import useWindowSize from '../hooks/windowSize'
 
 function Canvas({ tool }) {
   const { width, height } = useWindowSize()
-  const [elements, dispatch] = useConstruction([])
-  const [clickedPoint, setClickedPoint] = useState()
+  const [{ elements, intersections}, dispatch] = useConstruction([])
+  const [clickedPoint, setClickedPoint] = useState(null)
 
   const onPointClick = (point) => {
     if (tool === 'line' || tool === 'circle') {
-      if (clickedPoint && clickedPoint !== point) {
+      if (clickedPoint != null && clickedPoint !== point) {
         if (tool === 'line') {
           dispatch({
             type: 'line',
-            p1: clickedPoint.id,
-            p2: point.id
+            p1: clickedPoint,
+            p2: point
           })
         } else {
           dispatch({
             type: 'circle',
-            p1: clickedPoint.id,
-            p2: point.id
+            p1: clickedPoint,
+            p2: point
           })
-          setClickedPoint(null)
         }
+        setClickedPoint(null)
       } else {
         setClickedPoint(point)
       }
@@ -59,12 +59,19 @@ function Canvas({ tool }) {
           canvasHeight={height}
         />),
     ...elements
-      .filter(({ type }) => type === 'point')
+      .filter(({ type }) => type === 'point' || type === 'intersection')
       .map(el => 
         <Point
           key={el.id}
           el={el}
-          onClick={() => onPointClick(el)}
+          onClick={() => onPointClick(el.id)}
+        />),
+    ...intersections
+      .map((el, i) => 
+        <Point
+          key={`${i}-i`}
+          el={el}
+          onClick={() => onPointClick(`${i}-i`)}
         />)
   ]
 
