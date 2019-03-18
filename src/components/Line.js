@@ -1,6 +1,6 @@
 import React from 'react'
 
-const extendLine = (m, b, minX, maxX, minY, maxY) => {
+const genericLine = (m, b, minX, maxX, minY, maxY) => {
   const points = []
   const left = {
     x: minX,
@@ -19,34 +19,44 @@ const extendLine = (m, b, minX, maxX, minY, maxY) => {
     y: maxY
   }
 
-  if (top.y >= left.y >= bottom.y) {
+  if (maxY >= left.y >= minY) {
     points.push(left)
   }
-  if (top.y >= right.y >= bottom.y) {
+  if (maxY >= right.y >= minY) {
     points.push(right)
   }
-  if (right.x >= top.x >= left.x) {
+  if (maxX >= top.x >= minX) {
     points.push(top)
   }
-  if (right.x >= bottom.x >= left.x) {
+  if (maxX >= bottom.x >= minX) {
     points.push(bottom)
   }
-
-  return points
-}
-
-function Line ({ el, canvasWidth, canvasHeight }) {
-  const points = extendLine(
-    el.m, el.b,
-    -canvasWidth / 2, canvasWidth / 2,
-    -canvasHeight / 2, canvasHeight / 2
-  )
 
   return <line
     x1={points[0].x} y1={-points[0].y}
     x2={points[1].x} y2={-points[1].y}
     stroke="black" strokeWidth="2"
   />
+}
+
+const verticalLine = (x) => {
+  return <line
+    x1={x} y1="-50%"
+    x2={x} y2="50%"
+    stroke="black" strokeWidth="2"
+  />
+}
+
+function Line ({ el, canvasWidth, canvasHeight }) {
+  if (isNaN(el.x)) {
+    return genericLine(
+      el.m, el.b,
+      -canvasWidth / 2, canvasWidth / 2,
+      -canvasHeight / 2, canvasHeight / 2
+    )
+  } else {
+    return verticalLine(el.x)
+  }
 }
 
 export default Line

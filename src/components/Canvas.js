@@ -7,7 +7,11 @@ import useWindowSize from '../hooks/windowSize'
 
 function Canvas({ tool }) {
   const { width, height } = useWindowSize()
-  const [{ elements, intersections}, dispatch] = useConstruction([])
+  const [{ elements, intersections}, dispatch] = useConstruction([
+    { type: 'point', y: -100, x: 0 },
+    { type: 'point', y: 100, x: 0 },
+    { type: 'line', p1: 0, p2: 1 }
+  ])
   const [clickedPoint, setClickedPoint] = useState(null)
 
   const onPointClick = (point) => {

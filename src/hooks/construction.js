@@ -12,30 +12,76 @@ const intersection = (e1, e2, neg) => {
   }
 
   if (e1.type === 'line' && e2.type === 'line') {
-    const x = (e1.b - e2.b) / (e2.m - e1.m)
-    const y = e1.m * x + e1.b
-    return { x, y }
+    // Either line is vertical.
+    if (!isNaN(e1.x) || !isNaN(e2.x)) {
+      // Second line is vertical.
+      if (!isNaN(e1.m)) {
+        return {
+          x: e2.x,
+          y: e1.m * e2.x + e1.b
+        }
+      }
+      // First line is vertical.
+      else if (!isNaN(e2.m)) {
+        return {
+          x: e1.x,
+          y: e2.m * e1.x + e2.b
+        }
+      }
+      // Neither is vertical (no intersection).
+      else {
+        return {}
+      }
+    }
+    // Both lines are of the form y = mx + b. 
+    else {
+      const x = (e1.b - e2.b) / (e2.m - e1.m)
+      const y = e1.m * x + e1.b
+      return { x, y }
+    }
   } else if (e1.type === 'line' && e2.type === 'circle') {
-    const a = 1 + sq(e1.m)
-    const b = 2 * (-e2.cx + e1.m * (e1.b - e2.cy))
-    const c = sq(e2.cx) + sq(e1.b - e2.cy) - sq(e2.r)
+    // Line is vertical.
+    if (!isNaN(e1.x)) {
+      const x = e1.x
+      const y = e2.cy + (neg ? -1 : 1) * sqrt(sq(e2.r) - sq(x - e2.cx))
 
-    const x = (-b + (neg ? -1 : 1) * sqrt(sq(b) - 4 * a * c)) / (2 * a)
-    const y = e1.m * x + e1.b
+      return { x, y }
+    }
+    // Line is of the form y = mx + b. 
+    else {
+      const a = 1 + sq(e1.m)
+      const b = 2 * (-e2.cx + e1.m * (e1.b - e2.cy))
+      const c = sq(e2.cx) + sq(e1.b - e2.cy) - sq(e2.r)
 
-    return { x, y }
+      const x = (-b + (neg ? -1 : 1) * sqrt(sq(b) - 4 * a * c)) / (2 * a)
+      const y = e1.m * x + e1.b
+
+      return { x, y }
+    }
   } else if (e1.type === 'circle' && e2.type === 'circle') {
-    const bl = (sq(e1.cx) - sq(e2.cx) + sq(e1.cy) - sq(e2.cy) - sq(e1.r) + sq(e2.r)) / (-2 * (e2.cy - e1.cy))
-    const m = -(e2.cx - e1.cx) / (e2.cy - e1.cy)
+    // Circle centers lie on same horizontal line.
+    if (abs(e2.cy - e1.cy) < E) {
+      const x = (sq(e1.r) - sq(e2.r) - sq(e1.cx) + sq(e2.cx)) / (2 * (e2.cx - e1.cx))
+      const y = e1.cy + (neg ? -1 : 1) * sqrt(sq(e1.r) - sq(x - e1.cx))
 
-    const a = 1 + sq(m)
-    const b = 2 * (-e2.cx + m * (bl - e2.cy))
-    const c = sq(e2.cx) + sq(bl - e2.cy) - sq(e2.r)
+      return { x, y }
+    }
+    // Generic case.
+    else {
+      const bl = (sq(e1.cx) - sq(e2.cx) + sq(e1.cy) - sq(e2.cy) - sq(e1.r) + sq(e2.r)) / (-2 * (e2.cy - e1.cy))
+      const m = -(e2.cx - e1.cx) / (e2.cy - e1.cy)
 
-    const x = (-b + (neg ? -1 : 1) * sqrt(sq(b) - 4 * a * c)) / (2 * a)
-    const y = m * x + bl
+      const a = 1 + sq(m)
+      const b = 2 * (-e2.cx + m * (bl - e2.cy))
+      const c = sq(e2.cx) + sq(bl - e2.cy) - sq(e2.r)
 
-    return { x, y }
+      const x = (-b + (neg ? -1 : 1) * sqrt(sq(b) - 4 * a * c)) / (2 * a)
+      const y = m * x + bl
+
+      return { x, y }
+    }
+
+
   }
 }
 
@@ -45,7 +91,6 @@ const calculateIntersections = ({ elements, intersections }, newElement) => {
     ...elements.filter(x => x.type === 'point' || x.type === 'intersection'),
     ...intersections
   ]
-  console.log(points)
   const nonPoints = elements.filter(x => x.type === 'circle' || x.type === 'line')
   for (let element of nonPoints) {
 
@@ -112,9 +157,18 @@ const reducer = ({ elements, intersections }, { type, x, y, p1, p2 }) => {
       break
     }
     case 'line': {
-      const m = (point2.y - point1.y) / (point2.x - point1.x)
-      const b = point1.y - point1.x * m
-      const el = { type, p1, p2, m, b, id }
+      let el
+      // Vertical line.
+      if (Math.abs(point1.x - point2.x) < E) {
+        const x = point1.x
+        el = { type, p1, p2, x, id }
+      }
+      // Generic case (y = mx + b). 
+      else {
+        const m = (point2.y - point1.y) / (point2.x - point1.x)
+        const b = point1.y - point1.x * m
+        el = { type, p1, p2, m, b, id }
+      }
       newElements.push(el)
       newIntersections = calculateIntersections({ elements, intersections, }, el)
       break
@@ -143,11 +197,11 @@ const reducer = ({ elements, intersections }, { type, x, y, p1, p2 }) => {
   }
 }
 
-const useConstruction = () => {
-  const [state, dispatch] = useReducer(reducer, {
+const useConstruction = (elements = []) => {
+  const [state, dispatch] = useReducer(reducer, elements.reduce(reducer, {
     elements: [],
     intersections: []
-  })
+  }))
 
   return [state, dispatch]
 }
