@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
-import Canvas from './components/Canvas';
-import Toolbar from './components/Toolbar';
+import React from 'react';
+import PageView from './components/PageView'
 
 function App () {
-  const [tool, setTool] = useState()
-  
-  return (
-    <div className="App">
-      <Canvas tool={tool} />
-      <Toolbar tool={tool} onToolChange={setTool}/>
-    </div>
-  );
+  return <PageView />
 }
 
 export default App;

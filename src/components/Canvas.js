@@ -5,9 +5,9 @@ import Circle from './Circle'
 import useConstruction from '../hooks/construction'
 import useWindowSize from '../hooks/windowSize'
 
-function Canvas({ tool }) {
+function Canvas({ tool, construction = [] }) {
   const { width, height } = useWindowSize()
-  const [{ elements, intersections}, dispatch] = useConstruction([])
+  const [{ elements, intersections}, dispatch] = useConstruction(construction)
   const [clickedPoint, setClickedPoint] = useState(null)
 
   const onPointClick = (point) => {
