@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import CanvasContext from '../contexts/canvas'
 
 const genericLine = (m, b, minX, maxX, minY, maxY) => {
   const points = []
@@ -47,7 +48,9 @@ const verticalLine = (x) => {
   />
 }
 
-function Line ({ el, canvasWidth, canvasHeight }) {
+function Line ({ el }) {
+  const { width: canvasWidth, height: canvasHeight } = useContext(CanvasContext)
+
   if (isNaN(el.x)) {
     return genericLine(
       el.m, el.b,

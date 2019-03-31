@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Point from './Point'
 import Line from './Line'
 import Circle from './Circle'
+import CanvasContext from '../contexts/canvas'
 import useConstruction from '../hooks/construction'
 import useWindowSize from '../hooks/windowSize'
 
@@ -55,8 +56,6 @@ function Canvas({ tool, construction = [] }) {
         <Line
           key={el.id}
           el={el}
-          canvasWidth={width}
-          canvasHeight={height}
         />),
     ...elements
       .filter(({ type }) => type === 'point' || type === 'intersection')
@@ -80,7 +79,9 @@ function Canvas({ tool, construction = [] }) {
     viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
     onClick={onCanvasClick}
   >
-    {els}
+    <CanvasContext.Provider value={{ width, height }}>
+      {els}
+    </CanvasContext.Provider>
   </svg>
 }
 
