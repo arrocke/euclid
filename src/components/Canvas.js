@@ -48,7 +48,8 @@ function Canvas({ tool, construction = [] }) {
       .map(el =>
         <Circle
           key={el.id}
-          el={el}
+          cx={el.cx} cy={el.cy}
+          r={el.r}
         />),
     ...elements
       .filter(({ type }) => type === 'line')

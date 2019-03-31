@@ -1,9 +1,9 @@
 import React from 'react'
 
-function Circle({ el }) {
+function Circle({ cx, cy, r }) {
   return <circle
-    cx={el.cx} cy={-el.cy}
-    r={el.r}
+    cx={cx} cy={-cy}
+    r={r}
     fill="transparent" stroke="black" strokeWidth="2"
   />
 }
