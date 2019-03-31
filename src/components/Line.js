@@ -48,17 +48,17 @@ const verticalLine = (x) => {
   />
 }
 
-function Line ({ el }) {
+function Line ({ m, b, x }) {
   const { width: canvasWidth, height: canvasHeight } = useContext(CanvasContext)
 
-  if (isNaN(el.x)) {
+  if (isNaN(x)) {
     return genericLine(
-      el.m, el.b,
+      m, b,
       -canvasWidth / 2, canvasWidth / 2,
       -canvasHeight / 2, canvasHeight / 2
     )
   } else {
-    return verticalLine(el.x)
+    return verticalLine(x)
   }
 }
 

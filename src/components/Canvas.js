@@ -56,7 +56,7 @@ function Canvas({ tool, construction = [] }) {
       .map(el => 
         <Line
           key={el.id}
-          el={el}
+          m={el.m} b={el.b} x={el.x}
         />),
     ...elements
       .filter(({ type }) => type === 'point' || type === 'intersection')
