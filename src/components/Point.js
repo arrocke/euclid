@@ -1,8 +1,8 @@
 import React from 'react';
 
-function Point ({ el, onClick }) {
+function Point ({ x, y, onClick }) {
   return <circle
-    cx={el.x} cy={-el.y}
+    cx={x} cy={-y}
     r="4"
     onClick={onClick}
   />

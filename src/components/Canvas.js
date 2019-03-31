@@ -62,14 +62,14 @@ function Canvas({ tool, construction = [] }) {
       .map(el => 
         <Point
           key={el.id}
-          el={el}
+          x={el.x} y={el.y}
           onClick={() => onPointClick(el.id)}
         />),
     ...intersections
       .map((el, i) => 
         <Point
           key={`${i}-i`}
-          el={el}
+          x={el.x} y={el.y}
           onClick={() => onPointClick(`${i}-i`)}
         />)
   ]
