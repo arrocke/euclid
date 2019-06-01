@@ -5,9 +5,9 @@
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
+    "e2e": "npx cypress open",
     "lint": "eslint .",
-    "format": "eslint --fix .",
-    "check-types": "tsc"
+    "format": "eslint --fix ."
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,11 @@
     "@babel/preset-env": "7.4.5",
     "@babel/preset-react": "7.0.0",
     "@babel/preset-typescript": "7.3.3",
+    "@testing-library/cypress": "4.0.1",
     "@typescript-eslint/eslint-plugin": "1.9.0",
     "@typescript-eslint/parser": "1.9.0",
     "babel-loader": "8.0.6",
+    "cypress": "3.3.1",
     "eslint": "5.16.0",
     "eslint-config-prettier": "4.3.0",
     "eslint-loader": "2.1.2",
