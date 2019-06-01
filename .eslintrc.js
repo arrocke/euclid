@@ -4,11 +4,11 @@ module.exports = {
     "es6": true
   },
   "extends": [
-    "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
     "prettier",
-    "prettier/@typescript-eslint",
-    "prettier/react"
+    "prettier/react",
+    "prettier/@typescript-eslint"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -30,6 +30,10 @@ module.exports = {
     }
   },
   "rules": {
-    "prettier/prettier": ["error"]
+    "prettier/prettier": ["error"],
+    // Don't need react prop types because of typescript.
+    "react/prop-types": "off",
+    // Don't require return types for things like React.FC
+    '@typescript-eslint/explicit-function-return-type': 'off'
   }
 };
