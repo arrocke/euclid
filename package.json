@@ -1,0 +1,51 @@
+{
+  "name": "digital-euclid",
+  "version": "0.1.0",
+  "description": "Platform for working with propositions from Euclid's Elements.",
+  "scripts": {
+    "start": "webpack-dev-server --mode development",
+    "build": "webpack --mode production",
+    "lint": "eslint .",
+    "format": "eslint --fix .",
+    "check-types": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arrocke/euclid.git"
+  },
+  "author": "Adrian Rocke <me@adrianrocke.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arrocke/euclid/issues"
+  },
+  "homepage": "https://github.com/arrocke/euclid#readme",
+  "devDependencies": {
+    "@babel/core": "7.4.5",
+    "@babel/plugin-proposal-class-properties": "7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "7.4.4",
+    "@babel/preset-env": "7.4.5",
+    "@babel/preset-react": "7.0.0",
+    "@babel/preset-typescript": "7.3.3",
+    "@typescript-eslint/eslint-plugin": "1.9.0",
+    "@typescript-eslint/parser": "1.9.0",
+    "babel-loader": "8.0.6",
+    "eslint": "5.16.0",
+    "eslint-config-prettier": "4.3.0",
+    "eslint-loader": "2.1.2",
+    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-react": "7.13.0",
+    "html-webpack-plugin": "3.2.0",
+    "prettier": "1.17.1",
+    "standard": "12.0.1",
+    "typescript": "3.5.1",
+    "webpack": "4.32.2",
+    "webpack-cli": "3.3.2",
+    "webpack-dev-server": "3.5.0"
+  },
+  "dependencies": {
+    "@types/react": "16.8.19",
+    "@types/react-dom": "16.8.4",
+    "react": "16.8.6",
+    "react-dom": "16.8.6"
+  }
+}
