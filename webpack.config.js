@@ -12,14 +12,14 @@ module.exports = {
   },
   module: {
     rules: [
-      // {
-      //   enforce: 'pre',
-      //   test: /\.(ts|js)$/,
-      //   exclude: /node_modules/,
-      //   use: {
-      //     loader: 'eslint-loader',
-      //   },
-      // },
+      {
+        enforce: 'pre',
+        test: /\.(ts|js)x?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'eslint-loader',
+        },
+      },
       {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
