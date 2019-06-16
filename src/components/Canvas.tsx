@@ -1,26 +1,26 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useEffect, useRef} from 'react'
+import {useCanvasResize, useCanvasDimensions} from 'src/contexts/canvas'
 
-interface Props {
+interface CanvasProps {
   className?: string
   children?: JSX.Element
 }
 
-interface Dimensions {
-  width: number
-  height: number
-}
-
-const Canvas: React.FC<Props> = ({className, children}) => {
-  const [{width, height}, setDimensions] = useState<Dimensions>({width: 0, height: 0})
+const Canvas: React.FC<CanvasProps> = ({className, children}) => {
+  const resize = useCanvasResize()
+  const {width, height, left, top} = useCanvasDimensions()
   const el = useRef<SVGSVGElement>(null)
 
   // Update the dimensions of the canvas when the window resizes.
   useEffect(() => {
+    console.log('use-effect')
     const handler = () => {
       if (el && el.current) {
-        setDimensions({
+        resize({
           width: el.current.clientWidth,
           height: el.current.clientHeight,
+          left: -el.current.clientWidth / 2,
+          top: -el.current.clientHeight / 2,
         })
       }
     }
@@ -29,11 +29,17 @@ const Canvas: React.FC<Props> = ({className, children}) => {
     return () => {
       window.removeEventListener('resize', handler)
     }
-  }, [])
+  }, [resize, el])
 
   return (
-    <svg ref={el} width={width} height={height} className={className}>
-      {children}
+    <svg
+      ref={el}
+      width={width}
+      height={height}
+      className={className}
+      viewBox={`${left} ${top} ${width} ${height}`}
+    >
+      {width ? children : null}
     </svg>
   )
 }

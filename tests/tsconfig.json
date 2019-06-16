@@ -6,7 +6,8 @@
     "noEmit": true,                           /* Do not emit outputs. */
     "strict": true,                           /* Enable all strict type-checking options. */
     "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
-    "baseUrl": "./",
+    "types": ["jest"],
+    "baseUrl": "../",
     "paths": {
       "src/*": ["./src/*"],
       "tests/*": ["./tests/*"]

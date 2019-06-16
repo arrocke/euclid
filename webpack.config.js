@@ -9,6 +9,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    modules: [__dirname, 'node_modules']
   },
   module: {
     rules: [
