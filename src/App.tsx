@@ -2,7 +2,8 @@ import React from 'react'
 import Canvas from 'src/components/Canvas'
 import Construction from 'src/components/Construction'
 import {CanvasProvider} from 'src/contexts/canvas'
-import {ConstructionProvider, Element} from 'src/contexts/construction'
+import {ConstructionProvider} from 'src/contexts/construction'
+import {Element} from 'src/types'
 
 const initValue: Element[] = [
   {type: 'p', x: 0, y: -100},

@@ -1,6 +1,6 @@
 import React, {createContext, useReducer, useEffect, useContext, useMemo} from 'react'
 import * as compute from 'src/utils/compute'
-import {ConstructionState, ElementState, Element, Point} from 'src/types'
+import {ConstructionState, ElementState, Element} from 'src/types'
 
 interface ConstructionContextValue {
   construction: ConstructionState
@@ -21,62 +21,115 @@ type ReducerAction = InitAction
 
 const ConstructionContext = createContext<ConstructionContextValue | null>(null)
 
+const computeIntersection = (
+  el1: ElementState,
+  el2: ElementState,
+  neg: boolean = false,
+): compute.Point | null => {
+  if (el1.type === 'c' && el2.type === 'c') {
+    return compute.circleIntersection(el1, el2, neg)
+  } else if (el1.type === 'l' && el2.type === 'l') {
+    return compute.lineIntersection(el1, el2)
+  } else if (el1.type === 'l' && el2.type === 'c') {
+    return compute.circleLineIntersection(el2, el1, neg)
+  } else if (el1.type === 'c' && el2.type === 'l') {
+    return compute.circleLineIntersection(el1, el2, neg)
+  } else {
+    return null
+  }
+}
+
 const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, {type, data}) => {
+  const EPSILON = 0.00001
   switch (type) {
     case 'init': {
-      const elements = data.reduce<ElementState[]>((construction, el) => {
-        switch (el.type) {
-          case 'p': {
-            construction.push(el)
-            break
-          }
-          case 'l': {
-            const left = construction[el.left] as Point
-            const right = construction[el.right] as Point
-            construction.push({
-              ...el,
-              ...compute.line(left, right),
+      return data.reduce<ConstructionState>(
+        ({elements, points}, el) => {
+          // Add points to the list by finding intersection with previous elements.
+          const addPoints = (element: ElementState) => {
+            elements.forEach((el) => {
+              const point1 = computeIntersection(element, el, true)
+              if (
+                point1 &&
+                points.every(
+                  ({x, y}) => Math.abs(x - point1.x) > EPSILON || Math.abs(y - point1.y) > EPSILON,
+                )
+              ) {
+                points.push(point1)
+              }
+              const point2 = computeIntersection(element, el, false)
+              if (
+                point2 &&
+                points.every(
+                  ({x, y}) => Math.abs(x - point2.x) > EPSILON || Math.abs(y - point2.y) > EPSILON,
+                )
+              ) {
+                points.push(point2)
+              }
             })
-            break
           }
-          case 'c': {
-            const center = construction[el.center] as Point
-            const edge = construction[el.edge] as Point
-            construction.push({
-              ...el,
-              ...compute.circle(center, edge),
-            })
-            break
-          }
-          case 'i': {
-            let el1 = construction[el.element1]
-            let el2 = construction[el.element2]
-            if (el1.type === 'c' && el2.type === 'c') {
-              construction.push({
-                ...el,
-                ...compute.circleIntersection(el1, el2, el.neg),
-              })
-            } else if (el1.type === 'l' && el2.type === 'l') {
-              construction.push({...el, ...compute.lineIntersection(el1, el2)})
-            } else if (el1.type === 'l' && el2.type === 'c') {
-              construction.push({
-                ...el,
-                ...compute.circleLineIntersection(el2, el1, el.neg),
-              })
-            } else if (el1.type === 'c' && el2.type === 'l') {
-              construction.push({
-                ...el,
-                ...compute.circleLineIntersection(el1, el2, el.neg),
-              })
-            } else {
-              throw new Error('Not a valid intersection')
+
+          switch (el.type) {
+            case 'p': {
+              points.push({...el, id: elements.length})
+              elements.push(el)
+              break
             }
-            break
+            case 'l': {
+              const left = elements[el.left]
+              const right = elements[el.right]
+              if (left.type === 'p' && right.type === 'p') {
+                const line = {
+                  ...el,
+                  ...compute.line(left, right),
+                }
+                addPoints(line)
+                elements.push(line)
+              } else {
+                throw new Error('Invalid line')
+              }
+              break
+            }
+            case 'c': {
+              const center = elements[el.center]
+              const edge = elements[el.edge]
+              if (center.type === 'p' && edge.type === 'p') {
+                const circle = {
+                  ...el,
+                  ...compute.circle(center, edge),
+                }
+                addPoints(circle)
+                elements.push(circle)
+              } else {
+                throw new Error('Invalid circle')
+              }
+              break
+            }
+            case 'i': {
+              const el1 = elements[el.element1]
+              const el2 = elements[el.element2]
+              const intersection = computeIntersection(el1, el2, el.neg)
+              if (intersection) {
+                const i = points.findIndex(
+                  (point) =>
+                    Math.abs(intersection.x - point.x) < EPSILON &&
+                    Math.abs(intersection.y - point.y) < EPSILON,
+                )
+                points[i].id = elements.length
+                elements.push({
+                  ...el,
+                  ...intersection,
+                })
+              } else {
+                throw new Error('Invalid intersection')
+              }
+              break
+            }
           }
-        }
-        return construction
-      }, [])
-      return {elements}
+          return {elements, points}
+        },
+        {elements: [], points: []},
+      )
     }
   }
   return state
@@ -87,7 +140,7 @@ export const ConstructionProvider: React.FC<ConstructionProviderProps> = ({
   initial,
   children,
 }) => {
-  const [construction, dispatch] = useReducer(reducer, {elements: []})
+  const [construction, dispatch] = useReducer(reducer, {elements: [], points: []})
 
   // Reloads the construction when the initial prop changes.
   useEffect(() => {
@@ -109,7 +162,7 @@ export const useConstruction = () => {
     throw new Error('useConstruction must be used within a ConstructionProvider.')
   }
   const {
-    construction: {elements},
+    construction: {elements, points},
   } = context
-  return {elements}
+  return {elements, points}
 }

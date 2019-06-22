@@ -43,6 +43,13 @@ export interface IntersectionState extends Intersection {
 export type Element = Point | Line | Circle | Intersection
 export type ElementState = Point | LineState | CircleState | IntersectionState
 
+export interface ConstructionPoint {
+  id?: number
+  x: number
+  y: number
+}
+
 export interface ConstructionState {
   elements: ElementState[]
+  points: ConstructionPoint[]
 }

@@ -5,22 +5,29 @@ import Line from 'src/components/Line'
 import Circle from 'src/components/Circle'
 
 const Construction: React.FC = () => {
-  const {elements} = useConstruction()
+  const {elements, points} = useConstruction()
 
   const elementNodes = elements.map((el, i) => {
     switch (el.type) {
-      case 'p':
-        return <Point key={i} x={el.x} y={el.y} />
       case 'l':
         return <Line key={i} a={el.a} b={el.b} c={el.c} />
       case 'c':
         return <Circle key={i} h={el.h} k={el.k} r={el.r} />
-      case 'i':
-        return <Point key={i} x={el.x} y={el.y} />
+      default:
+        return null
     }
   })
 
-  return <>{elementNodes}</>
+  const pointNodes = points.map((p, i) => {
+    return <Point key={i} x={p.x} y={p.y} />
+  })
+
+  return (
+    <>
+      {elementNodes}
+      {pointNodes}
+    </>
+  )
 }
 
 export default Construction

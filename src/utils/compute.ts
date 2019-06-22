@@ -1,15 +1,15 @@
-interface Point {
+export interface Point {
   x: number
   y: number
 }
 
-interface Line {
+export interface Line {
   a: number
   b: number
   c: number
 }
 
-interface Circle {
+export interface Circle {
   h: number
   k: number
   r: number
