@@ -78,10 +78,10 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, {type, 
             case 'l': {
               const left = elements[el.left]
               const right = elements[el.right]
-              if (left.type === 'p' && right.type === 'p') {
+              if (['i', 'p'].includes(left.type) && ['i', 'p'].includes(right.type)) {
                 const line = {
                   ...el,
-                  ...compute.line(left, right),
+                  ...compute.line(left as compute.Point, right as compute.Point),
                 }
                 addPoints(line)
                 elements.push(line)
@@ -93,10 +93,10 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, {type, 
             case 'c': {
               const center = elements[el.center]
               const edge = elements[el.edge]
-              if (center.type === 'p' && edge.type === 'p') {
+              if (['i', 'p'].includes(center.type) && ['i', 'p'].includes(edge.type)) {
                 const circle = {
                   ...el,
-                  ...compute.circle(center, edge),
+                  ...compute.circle(center as compute.Point, edge as compute.Point),
                 }
                 addPoints(circle)
                 elements.push(circle)

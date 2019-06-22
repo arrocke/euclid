@@ -60,7 +60,9 @@ export const circleLineIntersection = (circle: Circle, line: Line, neg: boolean 
   const {a, b, c} = line
   const {h, k, r} = circle
   const d = Math.sqrt(r ** 2 - (a * h + b * k + c) ** 2 / (a ** 2 + b ** 2))
-  const x = (b * (b * h - a * k) - a * c + (neg ? -1 : 1) * b * d ** 2) / (a ** 2 + b ** 2)
-  const y = (a * (-b * h + a * k) - b * c + (neg ? 1 : -1) * a * d ** 2) / (a ** 2 + b ** 2)
+  const xc = (b * (b * h - a * k) - a * c) / (a ** 2 + b ** 2)
+  const yc = (a * (-b * h + a * k) - b * c) / (a ** 2 + b ** 2)
+  const x = xc + (neg ? -1 : 1) * b * Math.sqrt(d ** 2 / (a ** 2 + b ** 2))
+  const y = yc + (neg ? 1 : -1) * a * Math.sqrt(d ** 2 / (a ** 2 + b ** 2))
   return {x, y}
 }

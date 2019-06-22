@@ -13,10 +13,7 @@ const initValue: Element[] = [
   {type: 'c', center: 1, edge: 0},
   {type: 'i', element1: 3, element2: 4, neg: true},
   {type: 'i', element1: 3, element2: 4, neg: false},
-  {type: 'i', element1: 2, element2: 4, neg: false},
-  {type: 'i', element1: 2, element2: 3, neg: true},
   {type: 'l', left: 5, right: 6},
-  {type: 'i', element1: 9, element2: 2},
 ]
 
 const App: React.FC = () => {
