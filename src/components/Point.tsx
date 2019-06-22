@@ -6,7 +6,7 @@ interface PointProps {
 }
 
 const Point: React.FC<PointProps> = ({x, y}) => {
-  return <circle cx={x} cy={y} r="3" fill="black" />
+  return <circle cx={x} cy={-y} r="3" fill="black" />
 }
 
 export default Point

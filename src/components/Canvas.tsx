@@ -13,7 +13,6 @@ const Canvas: React.FC<CanvasProps> = ({className, children}) => {
 
   // Update the dimensions of the canvas when the window resizes.
   useEffect(() => {
-    console.log('use-effect')
     const handler = () => {
       if (el && el.current) {
         resize({
