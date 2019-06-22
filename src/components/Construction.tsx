@@ -2,6 +2,7 @@ import React, {useReducer} from 'react'
 import Point from 'src/components/Point'
 import Line from 'src/components/Line'
 import Circle from 'src/components/Circle'
+import * as compute from 'src/utils/compute'
 
 interface Point {
   type: 'p'
@@ -67,9 +68,7 @@ const init = (construction: ConstructionData): ConstructionState =>
         const right = newConstruction[el.right] as Point
         newConstruction.push({
           ...el,
-          a: left.y - right.y,
-          b: right.x - left.x,
-          c: left.x * right.y - right.x * left.y,
+          ...compute.line(left, right),
         })
         break
       }
@@ -78,9 +77,7 @@ const init = (construction: ConstructionData): ConstructionState =>
         const edge = newConstruction[el.edge] as Point
         newConstruction.push({
           ...el,
-          h: center.x,
-          k: center.y,
-          r: Math.sqrt((center.x - edge.x) ** 2 + (center.y - edge.y) ** 2),
+          ...compute.circle(center, edge),
         })
         break
       }
@@ -88,36 +85,24 @@ const init = (construction: ConstructionData): ConstructionState =>
         let el1 = newConstruction[el.element1]
         let el2 = newConstruction[el.element2]
         if (el1.type === 'c' && el2.type === 'c') {
-          const d = Math.sqrt((el1.h - el2.h) ** 2 + (el1.k - el2.k) ** 2)
-          const a = (el1.r ** 2 - el2.r ** 2 + d ** 2) / (2 * d)
-          const h = Math.sqrt(el1.r ** 2 - a ** 2)
-          const cx = el1.h + (a * (el2.h - el1.h)) / d
-          const cy = el1.k + (a * (el2.k - el1.k)) / d
-          const x = cx + ((el.neg ? 1 : -1) * h * (el2.k - el1.k)) / d
-          const y = cy + ((el.neg ? -1 : 1) * h * (el2.h - el1.h)) / d
-          newConstruction.push({...el, x, y})
+          newConstruction.push({
+            ...el,
+            ...compute.circleIntersection(el1, el2, el.neg),
+          })
         } else if (el1.type === 'l' && el2.type === 'l') {
-          const x = (el2.c * el1.b - el1.c * el2.b) / (el1.a * el2.b - el2.a * el1.b)
-          const y = (el2.c * el1.a - el1.c * el2.a) / (el1.a * el2.b - el2.a * el1.b)
-          newConstruction.push({...el, x, y})
+          newConstruction.push({...el, ...compute.lineIntersection(el1, el2)})
+        } else if (el1.type === 'l' && el2.type === 'c') {
+          newConstruction.push({
+            ...el,
+            ...compute.circleLineIntersection(el2, el1, el.neg),
+          })
+        } else if (el1.type === 'c' && el2.type === 'l') {
+          newConstruction.push({
+            ...el,
+            ...compute.circleLineIntersection(el1, el2, el.neg),
+          })
         } else {
-          if (el1.type === 'l' && el2.type === 'c') {
-            const temp = el1
-            el1 = el2
-            el2 = temp
-          }
-          if (el1.type === 'c' && el2.type === 'l') {
-            const {a, b, c} = el2
-            const {h, k, r} = el1
-            const d = Math.sqrt(r ** 2 - (a * h + b * k + c) ** 2 / (a ** 2 + b ** 2))
-            const x =
-              (b * (b * h - a * k) - a * c + (el.neg ? -1 : 1) * b * d ** 2) / (a ** 2 + b ** 2)
-            const y =
-              (a * (-b * h + a * k) - b * c + (el.neg ? 1 : -1) * a * d ** 2) / (a ** 2 + b ** 2)
-            newConstruction.push({...el, x, y})
-          } else {
-            throw new Error('Not a valid intersection')
-          }
+          throw new Error('Not a valid intersection')
         }
         break
       }
