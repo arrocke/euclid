@@ -1,54 +1,6 @@
 import React, {createContext, useReducer, useEffect, useContext, useMemo} from 'react'
 import * as compute from 'src/utils/compute'
-
-interface Point {
-  type: 'p'
-  x: number
-  y: number
-}
-
-interface Line {
-  type: 'l'
-  left: number
-  right: number
-}
-
-interface LineState extends Line {
-  a: number
-  b: number
-  c: number
-}
-
-interface Circle {
-  type: 'c'
-  center: number
-  edge: number
-}
-
-interface CircleState extends Circle {
-  h: number
-  k: number
-  r: number
-}
-
-interface Intersection {
-  type: 'i'
-  element1: number
-  element2: number
-  neg?: boolean
-}
-
-interface IntersectionState extends Intersection {
-  x: number
-  y: number
-}
-
-export type Element = Point | Line | Circle | Intersection
-type ElementState = Point | LineState | CircleState | IntersectionState
-
-interface ConstructionState {
-  elements: ElementState[]
-}
+import {ConstructionState, ElementState, Element, Point} from 'src/types'
 
 interface ConstructionContextValue {
   construction: ConstructionState
