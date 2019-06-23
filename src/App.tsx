@@ -1,6 +1,5 @@
 import React from 'react'
-import Canvas from 'src/components/Canvas'
-import Construction from 'src/components/Construction'
+import Editor from 'src/components/Editor'
 import {CanvasProvider} from 'src/contexts/canvas'
 import {ConstructionProvider} from 'src/contexts/construction'
 import {Element} from 'src/types'
@@ -21,9 +20,7 @@ const App: React.FC = () => {
     <div className="absolute inset-0">
       <CanvasProvider>
         <ConstructionProvider initial={initValue}>
-          <Canvas className="w-full h-full">
-            <Construction />
-          </Canvas>
+          <Editor />
         </ConstructionProvider>
       </CanvasProvider>
     </div>

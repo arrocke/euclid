@@ -17,7 +17,12 @@ interface InitAction {
   data: Element[]
 }
 
-type ReducerAction = InitAction
+interface PointAction {
+  type: 'point'
+  data: {x: number; y: number}
+}
+
+type ReducerAction = InitAction | PointAction
 
 const ConstructionContext = createContext<ConstructionContextValue | null>(null)
 
@@ -39,11 +44,11 @@ const computeIntersection = (
   }
 }
 
-const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, {type, data}) => {
+const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action) => {
   const EPSILON = 0.00001
-  switch (type) {
+  switch (action.type) {
     case 'init': {
-      return data.reduce<ConstructionState>(
+      return action.data.reduce<ConstructionState>(
         ({elements, points}, el) => {
           // Add points to the list by finding intersection with previous elements.
           const addPoints = (element: ElementState) => {
@@ -131,6 +136,12 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, {type, 
         {elements: [], points: []},
       )
     }
+    case 'point': {
+      return {
+        elements: [...state.elements, {type: 'p', x: action.data.x, y: action.data.y}],
+        points: [...state.points, {id: state.elements.length, x: action.data.x, y: action.data.y}],
+      }
+    }
   }
   return state
 }
@@ -163,6 +174,13 @@ export const useConstruction = () => {
   }
   const {
     construction: {elements, points},
+    dispatch,
   } = context
-  return {elements, points}
+  const addPoint = (x: number, y: number): void => {
+    dispatch({
+      type: 'point',
+      data: {x, y},
+    })
+  }
+  return {elements, points, addPoint}
 }

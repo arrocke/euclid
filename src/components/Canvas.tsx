@@ -1,15 +1,28 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, MouseEventHandler} from 'react'
 import {useCanvasResize, useCanvasDimensions} from 'src/contexts/canvas'
+
+export interface CanvasClickEventHandler {
+  (x: number, y: number): void
+}
 
 interface CanvasProps {
   className?: string
-  children?: JSX.Element
+  onClick?: CanvasClickEventHandler
 }
 
-const Canvas: React.FC<CanvasProps> = ({className, children}) => {
+const Canvas: React.FC<CanvasProps> = ({className, onClick = () => {}, children}) => {
   const resize = useCanvasResize()
   const {width, height, left, top} = useCanvasDimensions()
   const el = useRef<SVGSVGElement>(null)
+
+  const onCanvasClick: MouseEventHandler = ({clientX, clientY}) => {
+    if (el.current) {
+      const bounds = el.current.getBoundingClientRect()
+      const x = clientX - bounds.left + left
+      const y = -top - (clientY - bounds.top)
+      onClick(x, y)
+    }
+  }
 
   // Update the dimensions of the canvas when the window resizes.
   useEffect(() => {
@@ -37,6 +50,7 @@ const Canvas: React.FC<CanvasProps> = ({className, children}) => {
       height={height}
       className={className}
       viewBox={`${left} ${top} ${width} ${height}`}
+      onClick={onCanvasClick}
     >
       {width ? children : null}
     </svg>
