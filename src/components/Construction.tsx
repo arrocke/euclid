@@ -1,10 +1,18 @@
-import React from 'react'
+import React, {MouseEventHandler} from 'react'
 import {useConstruction} from 'src/contexts/construction'
 import Point from 'src/components/Point'
 import Line from 'src/components/Line'
 import Circle from 'src/components/Circle'
 
-const Construction: React.FC = () => {
+interface PointClickHandler {
+  ({x, y, elementId, pointId}: {x: number; y: number; elementId?: number; pointId: number}): void
+}
+
+interface ConstructionProps {
+  onPointClick?: PointClickHandler
+}
+
+const Construction: React.FC<ConstructionProps> = ({onPointClick = () => {}}) => {
   const {elements, points} = useConstruction()
 
   const elementNodes = elements.map((el, i) => {
@@ -19,7 +27,15 @@ const Construction: React.FC = () => {
   })
 
   const pointNodes = points.map((p, i) => {
-    return <Point key={i} x={p.x} y={p.y} />
+    const onClick: MouseEventHandler = () => {
+      onPointClick({
+        x: p.x,
+        y: p.y,
+        elementId: p.id,
+        pointId: i,
+      })
+    }
+    return <Point key={i} x={p.x} y={p.y} onClick={onClick} />
   })
 
   return (
