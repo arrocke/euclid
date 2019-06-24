@@ -4,8 +4,15 @@ import Point from 'src/components/Point'
 import Line from 'src/components/Line'
 import Circle from 'src/components/Circle'
 
-interface PointClickHandler {
-  ({x, y, elementId, pointId}: {x: number; y: number; elementId?: number; pointId: number}): void
+export interface PointClickEvent {
+  x: number
+  y: number
+  elementId?: number
+  pointId: number
+}
+
+export interface PointClickHandler {
+  (e: PointClickEvent): void
 }
 
 interface ConstructionProps {

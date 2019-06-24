@@ -1,6 +1,6 @@
 import React, {createContext, useReducer, useEffect, useContext, useMemo} from 'react'
 import * as compute from 'src/utils/compute'
-import {ConstructionState, ElementState, Element} from 'src/types'
+import {ConstructionState, ElementState, Element, ConstructionPoint} from 'src/types'
 
 interface ConstructionContextValue {
   construction: ConstructionState
@@ -22,7 +22,17 @@ interface PointAction {
   data: {x: number; y: number}
 }
 
-type ReducerAction = InitAction | PointAction
+interface LineAction {
+  type: 'line'
+  data: {left: number; right: number}
+}
+
+interface CircleAction {
+  type: 'circle'
+  data: {center: number; edge: number}
+}
+
+type ReducerAction = InitAction | PointAction | LineAction | CircleAction
 
 const ConstructionContext = createContext<ConstructionContextValue | null>(null)
 
@@ -44,36 +54,40 @@ const computeIntersection = (
   }
 }
 
+const EPSILON = 0.00001
+// Add points to the list by finding intersection with previous elements.
+const appendIntersections = (
+  {elements, points}: ConstructionState,
+  element: ElementState,
+): ConstructionPoint[] => {
+  return elements.reduce((newPoints, el) => {
+    const point1 = computeIntersection(element, el, true)
+    if (
+      point1 &&
+      newPoints.every(
+        ({x, y}) => Math.abs(x - point1.x) > EPSILON || Math.abs(y - point1.y) > EPSILON,
+      )
+    ) {
+      newPoints.push(point1)
+    }
+    const point2 = computeIntersection(element, el, false)
+    if (
+      point2 &&
+      newPoints.every(
+        ({x, y}) => Math.abs(x - point2.x) > EPSILON || Math.abs(y - point2.y) > EPSILON,
+      )
+    ) {
+      newPoints.push(point2)
+    }
+    return newPoints
+  }, points)
+}
+
 const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action) => {
-  const EPSILON = 0.00001
   switch (action.type) {
     case 'init': {
       return action.data.reduce<ConstructionState>(
         ({elements, points}, el) => {
-          // Add points to the list by finding intersection with previous elements.
-          const addPoints = (element: ElementState) => {
-            elements.forEach((el) => {
-              const point1 = computeIntersection(element, el, true)
-              if (
-                point1 &&
-                points.every(
-                  ({x, y}) => Math.abs(x - point1.x) > EPSILON || Math.abs(y - point1.y) > EPSILON,
-                )
-              ) {
-                points.push(point1)
-              }
-              const point2 = computeIntersection(element, el, false)
-              if (
-                point2 &&
-                points.every(
-                  ({x, y}) => Math.abs(x - point2.x) > EPSILON || Math.abs(y - point2.y) > EPSILON,
-                )
-              ) {
-                points.push(point2)
-              }
-            })
-          }
-
           switch (el.type) {
             case 'p': {
               points.push({...el, id: elements.length})
@@ -88,7 +102,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
                   ...el,
                   ...compute.line(left as compute.Point, right as compute.Point),
                 }
-                addPoints(line)
+                appendIntersections({elements, points}, line)
                 elements.push(line)
               } else {
                 throw new Error('Invalid line')
@@ -103,7 +117,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
                   ...el,
                   ...compute.circle(center as compute.Point, edge as compute.Point),
                 }
-                addPoints(circle)
+                appendIntersections({elements, points}, circle)
                 elements.push(circle)
               } else {
                 throw new Error('Invalid circle')
@@ -140,6 +154,30 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
       return {
         elements: [...state.elements, {type: 'p', x: action.data.x, y: action.data.y}],
         points: [...state.points, {id: state.elements.length, x: action.data.x, y: action.data.y}],
+      }
+    }
+    case 'line': {
+      const el: ElementState = {
+        ...compute.line(state.points[action.data.left], state.points[action.data.right]),
+        type: 'l',
+        left: action.data.left,
+        right: action.data.right,
+      }
+      return {
+        elements: [...state.elements, el],
+        points: appendIntersections({elements: state.elements, points: [...state.points]}, el),
+      }
+    }
+    case 'circle': {
+      const el: ElementState = {
+        ...compute.circle(state.points[action.data.center], state.points[action.data.edge]),
+        type: 'c',
+        edge: action.data.edge,
+        center: action.data.center,
+      }
+      return {
+        elements: [...state.elements, el],
+        points: appendIntersections({elements: state.elements, points: [...state.points]}, el),
       }
     }
   }
@@ -182,5 +220,17 @@ export const useConstruction = () => {
       data: {x, y},
     })
   }
-  return {elements, points, addPoint}
+  const addLine = (left: number, right: number): void => {
+    dispatch({
+      type: 'line',
+      data: {left, right},
+    })
+  }
+  const addCircle = (center: number, edge: number): void => {
+    dispatch({
+      type: 'circle',
+      data: {center, edge},
+    })
+  }
+  return {elements, points, addPoint, addLine, addCircle}
 }
