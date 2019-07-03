@@ -1,5 +1,5 @@
 import React, {createContext, useReducer, useEffect, useContext, useMemo} from 'react'
-import * as compute from 'src/utils/compute'
+import * as Compute from 'src/utils/compute'
 import {ConstructionState, ElementState, Element, ConstructionPoint} from 'src/types'
 
 interface ConstructionContextValue {
@@ -40,15 +40,9 @@ const computeIntersection = (
   el1: ElementState,
   el2: ElementState,
   neg: boolean = false,
-): compute.Point | null => {
-  if (el1.type === 'c' && el2.type === 'c') {
-    return compute.circleIntersection(el1, el2, neg)
-  } else if (el1.type === 'l' && el2.type === 'l') {
-    return compute.lineIntersection(el1, el2)
-  } else if (el1.type === 'l' && el2.type === 'c') {
-    return compute.circleLineIntersection(el2, el1, neg)
-  } else if (el1.type === 'c' && el2.type === 'l') {
-    return compute.circleLineIntersection(el1, el2, neg)
+): Compute.Point | null => {
+  if ((el1.type === 'l' || el1.type === 'c') && (el2.type === 'l' || el2.type === 'c')) {
+    return Compute.intersection(el1, el2, neg)
   } else {
     return null
   }
@@ -100,7 +94,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
               if (['i', 'p'].includes(left.type) && ['i', 'p'].includes(right.type)) {
                 const line = {
                   ...el,
-                  ...compute.line(left as compute.Point, right as compute.Point),
+                  ...Compute.line(left as Compute.Point, right as Compute.Point),
                 }
                 appendIntersections({elements, points}, line)
                 elements.push(line)
@@ -115,7 +109,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
               if (['i', 'p'].includes(center.type) && ['i', 'p'].includes(edge.type)) {
                 const circle = {
                   ...el,
-                  ...compute.circle(center as compute.Point, edge as compute.Point),
+                  ...Compute.circle(center as Compute.Point, edge as Compute.Point),
                 }
                 appendIntersections({elements, points}, circle)
                 elements.push(circle)
@@ -158,7 +152,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
     }
     case 'line': {
       const el: ElementState = {
-        ...compute.line(state.points[action.data.left], state.points[action.data.right]),
+        ...Compute.line(state.points[action.data.left], state.points[action.data.right]),
         type: 'l',
         left: action.data.left,
         right: action.data.right,
@@ -170,7 +164,7 @@ const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action)
     }
     case 'circle': {
       const el: ElementState = {
-        ...compute.circle(state.points[action.data.center], state.points[action.data.edge]),
+        ...Compute.circle(state.points[action.data.center], state.points[action.data.edge]),
         type: 'c',
         edge: action.data.edge,
         center: action.data.center,
