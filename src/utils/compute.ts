@@ -60,7 +60,11 @@ export const circle = (center: Point, edge: Point): Circle => {
   }
 }
 
-export const intersection = (el1: Line | Circle, el2: Line | Circle, neg: boolean): Point => {
+export const intersection = (
+  el1: Line | Circle,
+  el2: Line | Circle,
+  neg: boolean = false,
+): Point => {
   // Intersection between lines.
   if (isLine(el1) && isLine(el2)) {
     const {a: a1, b: b1, c: c1} = el1
