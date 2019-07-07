@@ -40,7 +40,7 @@ export const distance = ({x: x1, y: y1}: Point, {x: x2, y: y2}: Point): number =
 
 export class ComputeError extends Error {
   public constructor(message: string | undefined) {
-    super(message ? `ComputeError: ${message}` : 'ComputeError')
+    super(message ? `Compute Error: ${message}` : 'Compute Error')
   }
 }
 
