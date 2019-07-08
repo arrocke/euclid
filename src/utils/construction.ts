@@ -50,6 +50,12 @@ export interface Construction {
   points: ConstructionPoint[]
 }
 
+export class ConstructionError extends Error {
+  public constructor(message?: string) {
+    super(message ? `Construction Error: ${message}` : 'Construction Error')
+  }
+}
+
 function addIntersections(
   elements: Element[],
   points: ConstructionPoint[],
@@ -92,10 +98,10 @@ function addIntersections(
   })
 }
 
-export function create(elementInits: ElementInit[] = []): Construction {
+export function create(initialElements: ElementInit[] = []): Construction {
   const elements: Element[] = []
   const points: ConstructionPoint[] = []
-  elementInits.forEach((element) => {
+  initialElements.forEach((element) => {
     switch (element.type) {
       case 'point': {
         const point = {
@@ -171,4 +177,23 @@ export function create(elementInits: ElementInit[] = []): Construction {
     }
   })
   return {elements, points}
+}
+
+export function addPoint({elements, points}: Construction, {x, y}: Compute.Point) {
+  const point = {
+    x,
+    y,
+    id: elements.length,
+    type: 'point',
+  }
+  if (
+    points.every(({x, y}) => !Compute.floatEqual(x, point.x) || !Compute.floatEqual(y, point.y))
+  ) {
+    return {
+      elements: [...elements, point],
+      points: [...points, point],
+    }
+  } else {
+    throw new ConstructionError('Point or intersection already exists.')
+  }
 }

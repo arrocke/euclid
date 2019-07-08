@@ -20,3 +20,18 @@ describe('create', () => {
     ).toMatchSnapshot()
   })
 })
+
+describe('addPoint', () => {
+  test('adds the point to the construction', () => {
+    const construction = Construction.create()
+    expect(Construction.addPoint(construction, {x: -10, y: 4})).toMatchSnapshot()
+  })
+
+  test('throws exception if point already exists', () => {
+    const point: Construction.PointInit = {type: 'point', x: 1, y: 2}
+    const construction = Construction.create([point])
+    expect(() => Construction.addPoint(construction, point)).toThrowError(
+      new Construction.ConstructionError('Point or intersection already exists.'),
+    )
+  })
+})

@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`addPoint adds the point to the construction 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": -10,
+      "y": 4,
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": -10,
+      "y": 4,
+    },
+  ],
+}
+`;
+
 exports[`create initializes construction from argument 1`] = `
 Object {
   "elements": Array [
