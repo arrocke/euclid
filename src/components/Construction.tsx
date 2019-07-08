@@ -24,9 +24,9 @@ const Construction: React.FC<ConstructionProps> = ({onPointClick = () => {}}) =>
 
   const elementNodes = elements.map((el, i) => {
     switch (el.type) {
-      case 'l':
+      case 'line':
         return <Line key={i} a={el.a} b={el.b} c={el.c} />
-      case 'c':
+      case 'circle':
         return <Circle key={i} h={el.h} k={el.k} r={el.r} />
       default:
         return null

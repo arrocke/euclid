@@ -1,20 +1,19 @@
 import React, {createContext, useReducer, useEffect, useContext, useMemo} from 'react'
-import * as Compute from 'src/utils/compute'
-import {ConstructionState, ElementState, Element, ConstructionPoint} from 'src/types'
+import * as Construction from 'src/utils/construction'
 
 interface ConstructionContextValue {
-  construction: ConstructionState
+  construction: Construction.Construction
   dispatch: React.Dispatch<ReducerAction>
 }
 
 interface ConstructionProviderProps {
   value?: ConstructionContextValue
-  initial: Element[] | Promise<Element[]>
+  initial: Construction.ElementInit[] | Promise<Construction.ElementInit[]>
 }
 
 interface InitAction {
   type: 'init'
-  data: Element[]
+  data: Construction.ElementInit[]
 }
 
 interface PointAction {
@@ -36,146 +35,18 @@ type ReducerAction = InitAction | PointAction | LineAction | CircleAction
 
 const ConstructionContext = createContext<ConstructionContextValue | null>(null)
 
-const computeIntersection = (
-  el1: ElementState,
-  el2: ElementState,
-  neg: boolean = false,
-): Compute.Point | null => {
-  if ((el1.type === 'l' || el1.type === 'c') && (el2.type === 'l' || el2.type === 'c')) {
-    return Compute.intersection(el1, el2, neg)
-  } else {
-    return null
-  }
-}
-
-const EPSILON = 0.00001
-// Add points to the list by finding intersection with previous elements.
-const appendIntersections = (
-  {elements, points}: ConstructionState,
-  element: ElementState,
-): ConstructionPoint[] => {
-  return elements.reduce((newPoints, el) => {
-    const point1 = computeIntersection(element, el, true)
-    if (
-      point1 &&
-      newPoints.every(
-        ({x, y}) => Math.abs(x - point1.x) > EPSILON || Math.abs(y - point1.y) > EPSILON,
-      )
-    ) {
-      newPoints.push(point1)
-    }
-    const point2 = computeIntersection(element, el, false)
-    if (
-      point2 &&
-      newPoints.every(
-        ({x, y}) => Math.abs(x - point2.x) > EPSILON || Math.abs(y - point2.y) > EPSILON,
-      )
-    ) {
-      newPoints.push(point2)
-    }
-    return newPoints
-  }, points)
-}
-
-const reducer: React.Reducer<ConstructionState, ReducerAction> = (state, action) => {
+const reducer: React.Reducer<Construction.Construction, ReducerAction> = (state, action) => {
   switch (action.type) {
-    case 'init': {
-      return action.data.reduce<ConstructionState>(
-        ({elements, points}, el) => {
-          switch (el.type) {
-            case 'p': {
-              points.push({...el, id: elements.length})
-              elements.push(el)
-              break
-            }
-            case 'l': {
-              const left = elements[el.left]
-              const right = elements[el.right]
-              if (['i', 'p'].includes(left.type) && ['i', 'p'].includes(right.type)) {
-                const line = {
-                  ...el,
-                  ...Compute.line(left as Compute.Point, right as Compute.Point),
-                }
-                appendIntersections({elements, points}, line)
-                elements.push(line)
-              } else {
-                throw new Error('Invalid line')
-              }
-              break
-            }
-            case 'c': {
-              const center = elements[el.center]
-              const edge = elements[el.edge]
-              if (['i', 'p'].includes(center.type) && ['i', 'p'].includes(edge.type)) {
-                const circle = {
-                  ...el,
-                  ...Compute.circle(center as Compute.Point, edge as Compute.Point),
-                }
-                appendIntersections({elements, points}, circle)
-                elements.push(circle)
-              } else {
-                throw new Error('Invalid circle')
-              }
-              break
-            }
-            case 'i': {
-              const el1 = elements[el.element1]
-              const el2 = elements[el.element2]
-              const intersection = computeIntersection(el1, el2, el.neg)
-              if (intersection) {
-                const i = points.findIndex(
-                  (point) =>
-                    Math.abs(intersection.x - point.x) < EPSILON &&
-                    Math.abs(intersection.y - point.y) < EPSILON,
-                )
-                points[i].id = elements.length
-                elements.push({
-                  ...el,
-                  ...intersection,
-                })
-              } else {
-                throw new Error('Invalid intersection')
-              }
-              break
-            }
-          }
-          return {elements, points}
-        },
-        {elements: [], points: []},
-      )
-    }
-    case 'point': {
-      return {
-        elements: [...state.elements, {type: 'p', x: action.data.x, y: action.data.y}],
-        points: [...state.points, {id: state.elements.length, x: action.data.x, y: action.data.y}],
-      }
-    }
-    case 'line': {
-      const el: ElementState = {
-        ...Compute.line(state.points[action.data.left], state.points[action.data.right]),
-        type: 'l',
-        left: action.data.left,
-        right: action.data.right,
-      }
-      return {
-        elements: [...state.elements, el],
-        points: appendIntersections({elements: state.elements, points: [...state.points]}, el),
-      }
-    }
+    case 'init':
+      return Construction.create(action.data)
+    case 'point':
+      return Construction.addPoint(state, action.data)
+    case 'line':
+      return Construction.addLine(state, action.data.left, action.data.right)
     case 'circle': {
-      const el: ElementState = {
-        ...Compute.circle(state.points[action.data.center], state.points[action.data.edge]),
-        type: 'c',
-        edge: action.data.edge,
-        center: action.data.center,
-      }
-      return {
-        elements: [...state.elements, el],
-        points: appendIntersections({elements: state.elements, points: [...state.points]}, el),
-      }
+      return Construction.addCircle(state, action.data.center, action.data.edge)
     }
   }
-  return state
 }
 
 export const ConstructionProvider: React.FC<ConstructionProviderProps> = ({
