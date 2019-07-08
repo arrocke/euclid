@@ -107,29 +107,49 @@ export function create(elementInits: ElementInit[] = []): Construction {
         break
       }
       case 'line': {
-        const line = {
-          ...element,
-          ...Compute.line(elements[element.left] as Point, elements[element.right] as Point),
-          id: elements.length,
+        const left = elements[element.left]
+        const right = elements[element.right]
+        if (
+          left &&
+          right &&
+          (left.type === 'point' || left.type === 'intersection') &&
+          (right.type === 'point' || right.type === 'intersection')
+        ) {
+          const line = {
+            ...element,
+            ...Compute.line(left, right),
+            id: elements.length,
+          }
+          addIntersections(elements, points, line)
+          elements.push(line)
         }
-        addIntersections(elements, points, line)
-        elements.push(line)
         break
       }
       case 'circle': {
-        const circle = {
-          ...element,
-          ...Compute.circle(elements[element.center] as Point, elements[element.edge] as Point),
-          id: elements.length,
+        const center = elements[element.center]
+        const edge = elements[element.edge]
+        if (
+          center &&
+          edge &&
+          (center.type === 'point' || center.type === 'intersection') &&
+          (edge.type === 'point' || edge.type === 'intersection')
+        ) {
+          const circle = {
+            ...element,
+            ...Compute.circle(center, edge),
+            id: elements.length,
+          }
+          addIntersections(elements, points, circle)
+          elements.push(circle)
         }
-        addIntersections(elements, points, circle)
-        elements.push(circle)
         break
       }
       case 'intersection': {
         const one = elements[element.one]
         const two = elements[element.two]
         if (
+          one &&
+          two &&
           (one.type === 'line' || one.type === 'circle') &&
           (two.type === 'line' || two.type === 'circle')
         ) {
