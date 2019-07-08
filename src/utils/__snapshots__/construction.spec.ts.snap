@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create initializes construction from argument 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": -5,
+      "y": -2,
+    },
+    Object {
+      "a": 4,
+      "b": -6,
+      "c": 8,
+      "id": 2,
+      "left": 0,
+      "right": 1,
+      "type": "line",
+    },
+    Object {
+      "center": 0,
+      "edge": 1,
+      "h": 1,
+      "id": 3,
+      "k": 2,
+      "r": 7.211102550927978,
+      "type": "circle",
+    },
+    Object {
+      "center": 1,
+      "edge": 0,
+      "h": -5,
+      "id": 4,
+      "k": -2,
+      "r": 7.211102550927978,
+      "type": "circle",
+    },
+    Object {
+      "id": 5,
+      "neg": true,
+      "one": 3,
+      "two": 4,
+      "type": "intersection",
+      "x": 1.4641016151377544,
+      "y": -5.196152422706632,
+    },
+    Object {
+      "a": 7.196152422706632,
+      "b": 0.4641016151377544,
+      "c": -8.12435565298214,
+      "id": 6,
+      "left": 0,
+      "right": 5,
+      "type": "line",
+    },
+    Object {
+      "a": 3.196152422706632,
+      "b": 6.464101615137754,
+      "c": 28.908965343808667,
+      "id": 7,
+      "left": 1,
+      "right": 5,
+      "type": "line",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": -5,
+      "y": -2,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 6.999999999999999,
+      "y": 6,
+    },
+    Object {
+      "id": -1,
+      "neg": false,
+      "one": 4,
+      "two": 2,
+      "type": "intersection",
+      "x": -11,
+      "y": -6,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 4,
+      "two": 3,
+      "type": "intersection",
+      "x": -5.464101615137754,
+      "y": 5.196152422706632,
+    },
+    Object {
+      "id": 5,
+      "neg": true,
+      "one": 3,
+      "two": 4,
+      "type": "intersection",
+      "x": 1.4641016151377544,
+      "y": -5.196152422706632,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 6,
+      "two": 3,
+      "type": "intersection",
+      "x": 0.5358983848622458,
+      "y": 9.196152422706632,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 7,
+      "two": 4,
+      "type": "intersection",
+      "x": -11.464101615137753,
+      "y": 1.1961524227066316,
+    },
+  ],
+}
+`;
+
+exports[`create when called with no arguments, returns an empty construction 1`] = `
+Object {
+  "elements": Array [],
+  "points": Array [],
+}
+`;
