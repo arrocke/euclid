@@ -3,7 +3,7 @@ const path = require('path')
 const resolvePath = (partial) => path.resolve(__dirname, partial)
 
 module.exports = {
-  setupFilesAfterEnv: ['jest-dom/extend-expect', '@testing-library/react/cleanup-after-each'],
+  setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   testMatch: ['**/*.spec.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: ['/node_modules/', '/cypress/'],
   moduleDirectories: [resolvePath('node_modules'), resolvePath('./')],
