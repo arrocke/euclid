@@ -34,6 +34,18 @@ export const floatEqual = (a: number, b: number): boolean => {
   return Math.abs(a - b) < 0.0000001
 }
 
+export function pointEqual(p1: Point, p2: Point) {
+  return floatEqual(p1.x, p2.x) && floatEqual(p1.y, p2.y)
+}
+
+export function lineEqual(l1: Line, l2: Line) {
+  return floatEqual(l1.b / l1.a, l2.b / l2.a) && floatEqual(l1.c / l1.a, l2.c / l2.a)
+}
+
+export function circleEqual(c1: Circle, c2: Circle) {
+  return floatEqual(c1.h, c2.h) && floatEqual(c1.k, c2.k) && floatEqual(c1.r, c2.r)
+}
+
 export const distance = ({x: x1, y: y1}: Point, {x: x2, y: y2}: Point): number => {
   return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 }

@@ -54,22 +54,19 @@ export class ConstructionError extends Error {
   }
 }
 
-function addIntersections(
+function findIntersections(
   elements: Element[],
   points: ConstructionPoint[],
   newElement: Circle | Line,
-) {
+): ConstructionPoint[] {
+  const newPoints = points.slice()
   elements.forEach((element) => {
     if (element.type === 'line' || element.type === 'circle') {
       const point1 = Compute.intersection(element, newElement, true)
       const point2 = Compute.intersection(element, newElement, false)
       // Ensure the intersection is unique.
-      if (
-        points.every(
-          ({x, y}) => !Compute.floatEqual(x, point1.x) || !Compute.floatEqual(y, point1.y),
-        )
-      ) {
-        points.push({
+      if (newPoints.every((p) => !Compute.pointEqual(p, point1))) {
+        newPoints.push({
           ...point1,
           type: 'intersection',
           one: newElement.id,
@@ -78,12 +75,8 @@ function addIntersections(
           neg: true,
         })
       }
-      if (
-        points.every(
-          ({x, y}) => !Compute.floatEqual(x, point2.x) || !Compute.floatEqual(y, point2.y),
-        )
-      ) {
-        points.push({
+      if (newPoints.every((p) => !Compute.pointEqual(p, point2))) {
+        newPoints.push({
           ...point2,
           type: 'intersection',
           one: newElement.id,
@@ -94,105 +87,57 @@ function addIntersections(
       }
     }
   })
+  return newPoints
 }
 
-export function create(initialElements: ElementInit[] = []): Construction {
-  const elements: Element[] = []
-  const points: ConstructionPoint[] = []
-  initialElements.forEach((element) => {
-    switch (element.type) {
-      case 'point': {
-        const point = {
-          ...element,
-          id: elements.length,
-        }
-        elements.push(point)
-        points.push(point)
-        break
-      }
-      case 'line': {
-        const left = elements[element.left]
-        const right = elements[element.right]
-        if (
-          left &&
-          right &&
-          (left.type === 'point' || left.type === 'intersection') &&
-          (right.type === 'point' || right.type === 'intersection')
-        ) {
-          const line = {
-            ...element,
-            ...Compute.line(left, right),
-            id: elements.length,
-          }
-          addIntersections(elements, points, line)
-          elements.push(line)
-        }
-        break
-      }
-      case 'circle': {
-        const center = elements[element.center]
-        const edge = elements[element.edge]
-        if (
-          center &&
-          edge &&
-          (center.type === 'point' || center.type === 'intersection') &&
-          (edge.type === 'point' || edge.type === 'intersection')
-        ) {
-          const circle = {
-            ...element,
-            ...Compute.circle(center, edge),
-            id: elements.length,
-          }
-          addIntersections(elements, points, circle)
-          elements.push(circle)
-        }
-        break
-      }
-      case 'intersection': {
-        const one = elements[element.one]
-        const two = elements[element.two]
-        if (
-          one &&
-          two &&
-          (one.type === 'line' || one.type === 'circle') &&
-          (two.type === 'line' || two.type === 'circle')
-        ) {
-          const intersection = {
-            ...element,
-            ...Compute.intersection(one, two),
-            id: elements.length,
-          }
-          const point = points.filter(
-            ({x, y}) =>
-              Compute.floatEqual(x, intersection.x) && Compute.floatEqual(y, intersection.y),
-          )[0]
-          const index = points.indexOf(point)
-          points.splice(index, 1, intersection)
-          elements.push(intersection)
-          break
-        }
-      }
-    }
-  })
-  return {elements, points}
-}
-
-export function addPoint({elements, points}: Construction, {x, y}: Compute.Point) {
-  const point = {
+export function addPoint({elements, points}: Construction, {x, y}: Compute.Point): Construction {
+  const point: Point = {
     x,
     y,
     id: elements.length,
     type: 'point',
   }
-  if (
-    points.every(({x, y}) => !Compute.floatEqual(x, point.x) || !Compute.floatEqual(y, point.y))
-  ) {
+  if (points.every((p) => !Compute.pointEqual(p, point))) {
     return {
       elements: [...elements, point],
       points: [...points, point],
     }
   } else {
     throw new ConstructionError('Point or intersection already exists.')
+  }
+}
+
+function addIntersection(
+  construction: Construction,
+  oneIndex: number,
+  twoIndex: number,
+  neg: boolean,
+): Construction {
+  const one = construction.elements[oneIndex]
+  const two = construction.elements[twoIndex]
+  if (
+    one &&
+    two &&
+    (one.type === 'line' || one.type === 'circle') &&
+    (two.type === 'line' || two.type === 'circle')
+  ) {
+    const intersection: Intersection = {
+      ...Compute.intersection(one, two),
+      neg,
+      type: 'intersection',
+      one: oneIndex,
+      two: twoIndex,
+      id: construction.elements.length,
+    }
+    const points = construction.points.slice()
+    const index = points.indexOf(points.filter((p) => Compute.pointEqual(p, intersection))[0])
+    points.splice(index, 1, intersection)
+    return {
+      points,
+      elements: [...construction.elements, intersection],
+    }
+  } else {
+    return construction
   }
 }
 
@@ -220,14 +165,7 @@ export function addLine(
   }
 
   // Throw error if line already exists.
-  if (
-    elements.some(
-      (element) =>
-        element.type === 'line' &&
-        Compute.floatEqual(element.b / element.a, line.b / line.a) &&
-        Compute.floatEqual(element.c / element.a, line.c / line.a),
-    )
-  ) {
+  if (elements.some((element) => element.type === 'line' && Compute.lineEqual(element, line))) {
     throw new ConstructionError('Line already exists.')
   }
 
@@ -252,9 +190,8 @@ export function addLine(
   }
 
   // Add instersections created by the new line.
-  points = points.slice()
   line.id = elements.length
-  addIntersections(elements, points, line)
+  points = findIntersections(elements, points, line)
 
   return {elements: [...elements, line], points}
 }
@@ -284,13 +221,7 @@ export function addCircle(
 
   // Throw error if circle already exists.
   if (
-    elements.some(
-      (element) =>
-        element.type === 'circle' &&
-        Compute.floatEqual(element.h, circle.h) &&
-        Compute.floatEqual(element.k, circle.k) &&
-        Compute.floatEqual(element.r, circle.r),
-    )
+    elements.some((element) => element.type === 'circle' && Compute.circleEqual(element, circle))
   ) {
     throw new ConstructionError('Circle already exists.')
   }
@@ -316,9 +247,29 @@ export function addCircle(
   }
 
   // Add instersections created by the new circle.
-  points = points.slice()
   circle.id = elements.length
-  addIntersections(elements, points, circle)
+  points = findIntersections(elements, points, circle)
 
   return {elements: [...elements, circle], points}
+}
+
+export function create(initialElements: ElementInit[] = []): Construction {
+  return initialElements.reduce(
+    (construction: Construction, element: ElementInit): Construction => {
+      switch (element.type) {
+        case 'point':
+          return addPoint(construction, element)
+        case 'line':
+          return addLine(construction, element.left, element.right)
+        case 'circle':
+          return addCircle(construction, element.center, element.edge)
+        case 'intersection':
+          return addIntersection(construction, element.one, element.two, element.neg)
+      }
+    },
+    {
+      elements: [],
+      points: [],
+    },
+  )
 }
