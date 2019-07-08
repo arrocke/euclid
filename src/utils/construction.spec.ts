@@ -27,11 +27,93 @@ describe('addPoint', () => {
     expect(Construction.addPoint(construction, {x: -10, y: 4})).toMatchSnapshot()
   })
 
-  test('throws exception if point already exists', () => {
+  test('throws error if point already exists', () => {
     const point: Construction.PointInit = {type: 'point', x: 1, y: 2}
     const construction = Construction.create([point])
-    expect(() => Construction.addPoint(construction, point)).toThrowError(
-      new Construction.ConstructionError('Point or intersection already exists.'),
-    )
+    expect(() => Construction.addPoint(construction, point)).toThrowErrorMatchingSnapshot()
+  })
+})
+
+describe('addLine', () => {
+  test('adds the line to the construction from two points', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+    ])
+    expect(Construction.addLine(construction, 0, 1)).toMatchSnapshot()
+  })
+
+  test('adds the line to the construction using an intersection', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+      {type: 'circle', center: 0, edge: 1},
+      {type: 'circle', center: 1, edge: 0},
+    ])
+    expect(Construction.addLine(construction, 2, 3)).toMatchSnapshot()
+  })
+
+  test('adds new intersections to the construction', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+      {type: 'circle', center: 0, edge: 1},
+      {type: 'circle', center: 1, edge: 0},
+      {type: 'line', left: 0, right: 1},
+    ])
+    expect(Construction.addLine(construction, 2, 3)).toMatchSnapshot()
+  })
+
+  test('throws error if line already exists', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+      {type: 'line', left: 0, right: 1},
+    ])
+    expect(() => Construction.addLine(construction, 1, 0)).toThrowErrorMatchingSnapshot()
+  })
+
+  test('throws error if points do not exist', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+    ])
+    expect(() => Construction.addLine(construction, 2, 0)).toThrowErrorMatchingSnapshot()
+  })
+})
+
+describe('addCircle', () => {
+  test('adds the circle to the construction from two points', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+    ])
+    expect(Construction.addCircle(construction, 0, 1)).toMatchSnapshot()
+  })
+
+  test('adds new intersections to the construction', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+      {type: 'line', left: 0, right: 1},
+    ])
+    expect(Construction.addCircle(construction, 0, 1)).toMatchSnapshot()
+  })
+
+  test('throws error if circle already exists', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+      {type: 'circle', center: 0, edge: 1},
+    ])
+    expect(() => Construction.addCircle(construction, 0, 1)).toThrowErrorMatchingSnapshot()
+  })
+
+  test('throws error if points do not exist', () => {
+    const construction = Construction.create([
+      {type: 'point', x: 1, y: 2},
+      {type: 'point', x: 12, y: -1},
+    ])
+    expect(() => Construction.addCircle(construction, 2, 0)).toThrowErrorMatchingSnapshot()
   })
 })

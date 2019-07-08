@@ -1,5 +1,385 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`addCircle adds new intersections to the construction 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "a": 3,
+      "b": 11,
+      "c": -25,
+      "id": 2,
+      "left": 0,
+      "right": 1,
+      "type": "line",
+    },
+    Object {
+      "center": 0,
+      "edge": 1,
+      "h": 1,
+      "id": 3,
+      "k": 2,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": -10,
+      "y": 5,
+    },
+  ],
+}
+`;
+
+exports[`addCircle adds the circle to the construction from two points 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "center": 0,
+      "edge": 1,
+      "h": 1,
+      "id": 2,
+      "k": 2,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+  ],
+}
+`;
+
+exports[`addCircle throws error if circle already exists 1`] = `"Construction Error: Circle already exists."`;
+
+exports[`addCircle throws error if points do not exist 1`] = `"Construction Error: Points to contstruct the circle do not exist."`;
+
+exports[`addLine adds new intersections to the construction 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "center": 0,
+      "edge": 1,
+      "h": 1,
+      "id": 2,
+      "k": 2,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+    Object {
+      "center": 1,
+      "edge": 0,
+      "h": 12,
+      "id": 3,
+      "k": -1,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+    Object {
+      "a": 3,
+      "b": 11,
+      "c": -25,
+      "id": 4,
+      "left": 0,
+      "right": 1,
+      "type": "line",
+    },
+    Object {
+      "id": 5,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 3.9019237886466853,
+      "y": -9.026279441628825,
+    },
+    Object {
+      "id": 6,
+      "neg": false,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 9.098076211353316,
+      "y": 10.026279441628825,
+    },
+    Object {
+      "a": -19.05255888325765,
+      "b": 5.19615242270663,
+      "c": 121.24355652982142,
+      "id": 7,
+      "left": 2,
+      "right": 3,
+      "type": "line",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "id": 5,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 3.9019237886466853,
+      "y": -9.026279441628825,
+    },
+    Object {
+      "id": 6,
+      "neg": false,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 9.098076211353316,
+      "y": 10.026279441628825,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 4,
+      "two": 2,
+      "type": "intersection",
+      "x": -10,
+      "y": 5,
+    },
+    Object {
+      "id": -1,
+      "neg": false,
+      "one": 4,
+      "two": 3,
+      "type": "intersection",
+      "x": 23,
+      "y": -4,
+    },
+    Object {
+      "id": -1,
+      "neg": true,
+      "one": 7,
+      "two": 4,
+      "type": "intersection",
+      "x": 6.5,
+      "y": 0.49999999999999994,
+    },
+  ],
+}
+`;
+
+exports[`addLine adds the line to the construction from two points 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "a": 3,
+      "b": 11,
+      "c": -25,
+      "id": 2,
+      "left": 0,
+      "right": 1,
+      "type": "line",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+  ],
+}
+`;
+
+exports[`addLine adds the line to the construction using an intersection 1`] = `
+Object {
+  "elements": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "center": 0,
+      "edge": 1,
+      "h": 1,
+      "id": 2,
+      "k": 2,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+    Object {
+      "center": 1,
+      "edge": 0,
+      "h": 12,
+      "id": 3,
+      "k": -1,
+      "r": 11.40175425099138,
+      "type": "circle",
+    },
+    Object {
+      "id": 4,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 3.9019237886466853,
+      "y": -9.026279441628825,
+    },
+    Object {
+      "id": 5,
+      "neg": false,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 9.098076211353316,
+      "y": 10.026279441628825,
+    },
+    Object {
+      "a": -19.05255888325765,
+      "b": 5.19615242270663,
+      "c": 121.24355652982142,
+      "id": 6,
+      "left": 2,
+      "right": 3,
+      "type": "line",
+    },
+  ],
+  "points": Array [
+    Object {
+      "id": 0,
+      "type": "point",
+      "x": 1,
+      "y": 2,
+    },
+    Object {
+      "id": 1,
+      "type": "point",
+      "x": 12,
+      "y": -1,
+    },
+    Object {
+      "id": 4,
+      "neg": true,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 3.9019237886466853,
+      "y": -9.026279441628825,
+    },
+    Object {
+      "id": 5,
+      "neg": false,
+      "one": 3,
+      "two": 2,
+      "type": "intersection",
+      "x": 9.098076211353316,
+      "y": 10.026279441628825,
+    },
+  ],
+}
+`;
+
+exports[`addLine throws error if line already exists 1`] = `"Construction Error: Line already exists."`;
+
+exports[`addLine throws error if points do not exist 1`] = `"Construction Error: Points to contstruct the line do not exist."`;
+
 exports[`addPoint adds the point to the construction 1`] = `
 Object {
   "elements": Array [
@@ -20,6 +400,8 @@ Object {
   ],
 }
 `;
+
+exports[`addPoint throws error if point already exists 1`] = `"Construction Error: Point or intersection already exists."`;
 
 exports[`create initializes construction from argument 1`] = `
 Object {
