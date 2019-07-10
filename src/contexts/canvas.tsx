@@ -26,7 +26,7 @@ export const CanvasProvider: React.FC<CanvasProvderProps> = ({value, children}) 
     height: 0,
   })
 
-  const contextValue = useMemo<CanvasContextValue>(() => ({state, setState} || value), [
+  const contextValue = useMemo<CanvasContextValue>(() => value || {state, setState}, [
     state,
     setState,
     value,
