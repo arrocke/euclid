@@ -22,7 +22,7 @@ const Editor: React.FC = () => {
   }
 
   const onPointClick: PointClickHandler = (point) => {
-    if (clickedPoint !== null) {
+    if (clickedPoint !== null && clickedPoint.pointId !== point.pointId) {
       if (activeTool === ActiveToolType.line) {
         addLine(clickedPoint.pointId, point.pointId)
         setClickedPoint(null)
