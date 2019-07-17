@@ -1,4 +1,4 @@
-import * as Compute from 'src/utils/compute'
+import * as Compute from 'src/geometry'
 
 describe('line', () => {
   test('computes vertical lines', () => {
@@ -62,11 +62,11 @@ describe('intersections', () => {
       const circle = {h: 2, k: -7, r: 6}
 
       expect(() => Compute.intersection(circle, circle, true)).toThrowError(
-        new Compute.ComputeError('Circles overlap at all points.'),
+        new Compute.GeometryError('Circles overlap at all points.'),
       )
 
       expect(() => Compute.intersection(circle, circle, false)).toThrowError(
-        new Compute.ComputeError('Circles overlap at all points.'),
+        new Compute.GeometryError('Circles overlap at all points.'),
       )
     })
 
@@ -75,11 +75,11 @@ describe('intersections', () => {
       const circle2 = {h: 10, k: 10, r: 2}
 
       expect(() => Compute.intersection(circle1, circle2, true)).toThrowError(
-        new Compute.ComputeError('Circles do not intersect.'),
+        new Compute.GeometryError('Circles do not intersect.'),
       )
 
       expect(() => Compute.intersection(circle1, circle2, false)).toThrowError(
-        new Compute.ComputeError('Circles do not intersect.'),
+        new Compute.GeometryError('Circles do not intersect.'),
       )
     })
   })
@@ -99,7 +99,7 @@ describe('intersections', () => {
       const line2 = {a: 8, b: 4, c: -16}
 
       expect(() => console.log(Compute.intersection(line1, line2))).toThrowError(
-        new Compute.ComputeError('Lines overlap at all points.'),
+        new Compute.GeometryError('Lines overlap at all points.'),
       )
     })
 
@@ -108,7 +108,7 @@ describe('intersections', () => {
       const line2 = {a: 4, b: 2, c: -16}
 
       expect(() => Compute.intersection(line1, line2)).toThrowError(
-        new Compute.ComputeError('Lines do not intersect.'),
+        new Compute.GeometryError('Lines do not intersect.'),
       )
     })
   })
@@ -145,11 +145,11 @@ describe('intersections', () => {
       const circle = {h: 2, k: 4, r: 2}
 
       expect(() => Compute.intersection(circle, line, true)).toThrowError(
-        new Compute.ComputeError('Circle and line do not intersect.'),
+        new Compute.GeometryError('Circle and line do not intersect.'),
       )
 
       expect(() => Compute.intersection(circle, line, false)).toThrowError(
-        new Compute.ComputeError('Circle and line do not intersect.'),
+        new Compute.GeometryError('Circle and line do not intersect.'),
       )
     })
   })

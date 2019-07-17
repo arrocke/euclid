@@ -1,4 +1,4 @@
-import * as Construction from 'src/utils/construction'
+import * as Construction from 'src/construction'
 
 describe('create', () => {
   test('when called with no arguments, returns an empty construction', () => {
