@@ -12,8 +12,8 @@ test('renders circle with center at point coordinates', () => {
 
 test('triggers click event when the circle is clicked', () => {
   const clickHandler = jest.fn()
-  const {container} = renderSVG(<Point x={10} y={5} onClick={clickHandler} />)
-  const point = container.firstElementChild as Element
+  const {svgRoot} = renderSVG(<Point x={10} y={5} onClick={clickHandler} />)
+  const point = svgRoot.firstElementChild as Element
   fireEvent.click(point)
   expect(clickHandler).toHaveBeenCalled()
 })
